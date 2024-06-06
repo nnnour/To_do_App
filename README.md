@@ -32,4 +32,5 @@ The Todo App is a simple web application that allows users to manage their tasks
 
 
 ## 📹 Demo Video
-<iframe width="560" height="315" src="https://www.loom.com/embed/f9a243ded85a4c5f839672afc68b5172?sid=adbb5566-76fe-45f5-a1e1-9e4ea93d6583" frameborder="0" allowfullscreen></iframe>
+[Watch the demo video](https://www.loom.com/share/f9a243ded85a4c5f839672afc68b5172?sid=adbb5566-76fe-45f5-a1e1-9e4ea93d6583)
+
