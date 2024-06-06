@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <style>
+        .todo-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.ui.accordion').accordion();
+        });
+    </script>
+</head>
+
+<body>
+    <div style="margin-top: 50px;" class="ui container">
+        <h1 class="ui center aligned icon header">
+            <i class="tasks icon"></i>
+            Todo App
+        </h1>
+
+        <form class="ui form" action="/add" method="post">
+            <div class="field">
+                <label for="title">Todo Title</label>
+                <input type="text" name="title" placeholder="Enter Todo..." required>
+            </div>
+            <div class="field">
+                <label for="parent_id">Parent Task (Optional for sub-tasks)</label>
+                <select name="parent_id">
+                    <option value="">None (Top-level task)</option>
+                    {% for todo in todo_list if todo.level < 3 %}
+                    <option value="{{ todo.id }}">{{ '—' * todo.level }} {{ todo.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="ui blue button" type="submit">Add</button>
+        </form>
+
+        <div class="ui styled accordion">
+            {% for todo in todo_list if todo.level == 1 %}
+            <div class="title">
+                <i class="dropdown icon"></i>
+                {{todo.title}}
+            </div>
+            <div class="content">
+                <p class="ui big header">{{todo.title}}</p>
+                <div class="actions">
+                    {% if todo.complete == False %}
+                    <span class="ui gray label">Not Completed</span>
+                    <a class="ui green button" href="/update/{{ todo.id }}">Update</a>
+                    {% else %}
+                    <span class="ui black label">Completed</span>
+                    <a class="ui green button" href="/update/{{ todo.id }}">Update</a>
+                    {% endif %}
+                    <a class="ui red button" href="/delete/{{ todo.id }}">Delete</a>
+                    
+                    <!-- Move task dropdown and button -->
+                    <form action="/move-task" method="post" style="display: inline;">
+                        <input type="hidden" name="task_id" value="{{ todo.id }}">
+                        <select name="new_parent_id">
+                            <option value="">Move to...</option>
+                            {% for target_todo in todo_list if target_todo.level == 1 and target_todo.id != todo.id %}
+                            <option value="{{ target_todo.id }}">{{ target_todo.title }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="ui yellow button" type="submit">Move</button>
+                    </form>
+                </div>
+
+                {% for sub_todo in todo.children %}
+                <div class="ui segment level-2">
+                    <p class="ui big header">{{sub_todo.title}}</p>
+                    <div class="actions">
+                        {% if sub_todo.complete == False %}
+                        <span class="ui gray label">Not Completed</span>
+                        <a class="ui green button" href="/update/{{ sub_todo.id }}">Update</a>
+                        {% else %}
+                        <span class="ui black label">Completed</span>
+                        <a class="ui green button" href="/update/{{ sub_todo.id }}">Update</a>
+                        {% endif %}
+                        <a class="ui red button" href="/delete/{{ sub_todo.id }}">Delete</a>
+                    </div>
+
+                    {% for sub_sub_todo in sub_todo.children %}
+                    <div class="ui segment level-3">
+                        <p class="ui big header">{{sub_sub_todo.title}}</p>
+                        <div class="actions">
+                            {% if sub_sub_todo.complete == False %}
+                            <span class="ui gray label">Not Completed</span>
+                            <a class="ui green button" href="/update/{{ sub_sub_todo.id }}">Update</a>
+                            {% else %}
+                            <span class="ui black label">Completed</span>
+                            <a class="ui green button" href="/update/{{ sub_sub_todo.id }}">Update</a>
+                            {% endif %}
+                            <a class="ui red button" href="/delete/{{ sub_sub_todo.id }}">Delete</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                {% endfor %}
+
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Logout Button -->
+        <a href="/logout" class="ui red button" style="margin-top: 20px;">Logout</a>
+    </div>
+</body>
+
+</html>
