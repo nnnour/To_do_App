@@ -1,5 +1,6 @@
 # 📝 Todo App
 
+![Todo App Demo](todoappgif.gif)
 
 ## 🌟 Overview 🌟
 The Todo App is a simple web application that allows users to manage their tasks. Users can create an account, log in, add tasks, mark tasks as complete, and move a top-level task under another top-level task. The application is built using Flask and SQLAlchemy, with SQLite as the database.
